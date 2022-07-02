@@ -2,7 +2,6 @@ from datetime import datetime
 from tabulate import tabulate
 from facades.FanController import FanController
 from facades.parsers.TabbedTable import TabbedTable
-from facades.exceptions.TemperatureRangeException import TemperatureRangeException
 
 class TemperatureController:
     """
@@ -49,14 +48,6 @@ class TemperatureController:
 
         # Set up our ranges
         ranges = Ranges(self.ranges)
-
-        # Ensure there is no overlap in the ranges with the configured ranges
-        for x in ranges.all():
-            for y in ranges.all():
-                if ranges.overlaps(x, y):
-                    raise TemperatureRangeException(
-                        f'Temperature range {x[0]} to {x[1]} conflicts with {y[0]} to {y[1]}'
-                    )
 
         # Fetch the lowest range
         lowestRange = ranges.lowestRange()

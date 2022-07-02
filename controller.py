@@ -4,17 +4,6 @@ from facades.Configuration import Configuration
 from facades.IPMITool import IPMITool
 from facades.TemperatureController import TemperatureController
 
-# reqs: pythong 3.6 python3-pip3
-# pip3 install -r requirements.txt
-# ipmitool
-# linux
-
-# envars
-# IDRAC_HOST
-# IDRAC_USERNAME
-# IDRAC_PASSWORD
-# TEMP_RANGES
-
 def main():
     # Pipe seperate string i.e. 30,35,4|35,40,4|40,45,5
     rangesEnv = os.getenv('TEMP_RANGES', None)

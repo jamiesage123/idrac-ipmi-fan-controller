@@ -16,7 +16,7 @@ from facades.TemperatureController import TemperatureController
 # TEMP_RANGES
 
 def main():
-    # Pipe seperate string i.e. 30,4|35,4|40,5
+    # Pipe seperate string i.e. 30,35,4|35,40,4|40,45,5
     rangesEnv = os.getenv('TEMP_RANGES', None)
 
     # Parse ranges from our the envars
@@ -24,8 +24,8 @@ def main():
         ranges = []
 
         for item in rangesEnv.split('|'):
-            range, fanSpeed = item.split(',')
-            ranges.append([int(range), fanSpeed if fanSpeed == 'static' else int(fanSpeed)])
+            startOfRange, endOfRange, fanSpeed = item.split(',')
+            ranges.append([int(startOfRange), int(endOfRange), fanSpeed if fanSpeed == 'static' else int(fanSpeed)])
     else:
         # Default range
         # [startOfRange, endOfRange, fanSpeed (percentage or 'static')]

@@ -9,9 +9,15 @@ from facades.TemperatureController import TemperatureController
 # ipmitool
 # linux
 
+# envars
+# IDRAC_HOST
+# IDRAC_USERNAME
+# IDRAC_PASSWORD
+# TEMP_RANGES
+
 def main():
     # Pipe seperate string i.e. 30,4|35,4|40,5
-    rangesEnv = os.getenv('RANGES', None)
+    rangesEnv = os.getenv('TEMP_RANGES', None)
 
     # Parse ranges from our the envars
     if rangesEnv is not None:
@@ -19,15 +25,16 @@ def main():
 
         for item in rangesEnv.split('|'):
             range, fanSpeed = item.split(',')
-            ranges.append([int(range), int(fanSpeed)])
+            ranges.append([int(range), fanSpeed if fanSpeed == 'static' else int(fanSpeed)])
     else:
         # Default range
+        # [startOfRange, endOfRange, fanSpeed (percentage or 'static')]
         ranges = [
-            [30, 4],
-            [35, 4],
-            [40, 5],
-            [45, 8],
-            [50, 'static']
+            [30, 40, 4],
+            [40, 45, 5],
+            [45, 50, 8],
+            [50, 55, 10],
+            [55, 100, 'static']
         ]
 
     # Set up our configuration
@@ -38,7 +45,6 @@ def main():
             "password": os.getenv('IDRAC_PASSWORD')
         },
         "monitor": {
-            "range_increment": os.getenv('RANGE_INCREMENT', 5),
             "ranges": ranges
         }
     })

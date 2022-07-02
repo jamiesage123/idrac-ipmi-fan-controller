@@ -12,7 +12,6 @@ class TemperatureController:
     def __init__(self, config, ipmitool):
         self.ipmitool = ipmitool
         self.fanController = FanController(ipmitool)
-        self.rangeIncrement = config.get('monitor', 'range_increment')
         self.ranges = config.get('monitor', 'ranges')
         
     """
@@ -49,14 +48,14 @@ class TemperatureController:
         # TODO: We dont need to monitor if the machine is in the "off" state
 
         # Set up our ranges
-        ranges = Ranges(self.ranges, self.rangeIncrement)
+        ranges = Ranges(self.ranges)
 
-        # Ensure there is no overlap in the ranges with the configured range increment
+        # Ensure there is no overlap in the ranges with the configured ranges
         for x in ranges.all():
             for y in ranges.all():
                 if ranges.overlaps(x, y):
                     raise TemperatureRangeException(
-                        f'Temperature range {x[0]} to {x[0] + self.rangeIncrement} conflicts with {y[0]} to {y[0] + self.rangeIncrement}'
+                        f'Temperature range {x[0]} to {x[1]} conflicts with {y[0]} to {y[1]}'
                     )
 
         # Fetch the lowest range
@@ -79,10 +78,7 @@ class TemperatureController:
 
         # Loop through our ranges and find the range that we should be in
         for rangeConfig in ranges.all():
-            range, fanSpeed = rangeConfig
-
-            startOfRange = range
-            endOfRange = startOfRange + self.rangeIncrement
+            startOfRange, endOfRange, fanSpeed = rangeConfig
 
             # If our temperature falls into this range, select it
             if temperature >= startOfRange and temperature <= endOfRange:
@@ -102,7 +98,7 @@ class TemperatureController:
             for rangeConfig in ranges.all():
                 if rangeConfig[0] == fallBackRange:
                     selectedRange = rangeConfig
-                    notes = f'Temperature outside of configured ranges, falling back to closest configuration ({rangeConfig[0]} - {rangeConfig[0] + self.rangeIncrement})'
+                    notes = f'Temperature outside of configured ranges, falling back to closest configuration ({rangeConfig[0]} - {rangeConfig[1]})'
         
         # If we still dont have a range, fall back to static fan mode
         if selectedRange is None:
@@ -110,14 +106,14 @@ class TemperatureController:
             self.fanController.setStaticFanMode()
         else:
             # Get the selected range details
-            range, fanSpeed = selectedRange
+            startOfRange, endOfRange, fanSpeed = selectedRange
 
             # Set the speed
             self.fanController.setSpeed(fanSpeed)
 
             # Update the notes
             if notes == "":
-                notes = f'Using configured range {range} to {range + self.rangeIncrement}'
+                notes = f'Using configured range {startOfRange} to {endOfRange}'
 
         # Print the results to the console
         self.printResults(temperatures, notes)
@@ -144,9 +140,8 @@ class Ranges:
     Represents a facade for dealing with ranges
     """
 
-    def __init__(self, ranges, increment):
+    def __init__(self, ranges):
         self.ranges = self.sort(ranges)
-        self.increment = increment
 
     """
     Sort an array of ranges to be in order of smallest to largest
@@ -159,7 +154,7 @@ class Ranges:
     Determine if two ranges overlap
     """
     def overlaps(self, x, y):
-        return x[0] != y[0] and ((x[0] + self.increment - 1) >= (y[0]) and (y[0] + self.increment - 1) >= (x[0]))
+        return x[0] != y[0] and ((x[1] - 1) >= (y[0]) and (y[1] - 1) >= (x[0]))
 
     """
     Get the highest range

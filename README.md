@@ -129,7 +129,7 @@ docker run -d \
   -e IDRAC_USERNAME=<iDRAC username> \
   -e IDRAC_PASSWORD=<iDRAC password> \
   -e TEMP_RANGES=<pipe seperated list of temp ranges> \
-  jamiesage123/idrac_ipmi_fan_controller:latest
+  jamiesage123/idrac-ipmi-fan-controller:latest
 ```
 
 <p align="right">(<a href="#top">back to top</a>)</p>

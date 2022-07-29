@@ -1,5 +1,3 @@
-from facades.parsers.TabbedTable import TabbedTable
-
 class FanController:
     """
     Represents a facade for controlling iDRAC fans using ipmitool

@@ -1,17 +1,18 @@
 import subprocess
 from facades.parsers.TabbedList import TabbedList
-from facades.exceptions.IPMIConnectionException import IPMIConnectionException
 from facades.exceptions.IPMIToolShellException import IPMIToolShellException
+from facades.exceptions.IPMIConnectionException import IPMIConnectionException
+from facades.exceptions.InvalidConfigurationException import InvalidConfigurationException
 
 class IPMITool:
     """
     Represents a facade for authenticating with and executing ipmitool commands
     """
 
-    def __init__(self, config):
-        self.host = config.get('ipmi', 'host')
-        self.username = config.get('ipmi', 'username')
-        self.password = config.get('ipmi', 'password')
+    def __init__(self, host, username, password):
+        self.host = host
+        self.username = username
+        self.password = password
 
         self.verifyCredentails()
 
@@ -21,7 +22,7 @@ class IPMITool:
     def verifyCredentails(self):
         # Verify that we have the required credentials
         if self.host == "" or self.username == "" or self.password == "":
-            raise ValueError ("Host, username and password must be provided")
+            raise InvalidConfigurationException ("Host, username and password must be provided")
 
         try:
             # Attempt to retrieve basic info from IPMI

@@ -40,9 +40,6 @@ def main():
 def parseRanges(rangesEnv):
     ranges = None
 
-    # Pipe seperate string i.e. 30,35,4|35,40,4|40,45,5
-    rangesEnv = os.getenv('TEMP_RANGES', None)
-
     # Parse ranges from our the envars
     if rangesEnv is not None:
         ranges = []

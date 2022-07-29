@@ -2,6 +2,7 @@ from datetime import datetime
 from tabulate import tabulate
 from facades.FanController import FanController
 from facades.parsers.TabbedTable import TabbedTable
+from facades.exceptions.InvalidConfigurationException import InvalidConfigurationException
 
 class TemperatureController:
     """
@@ -132,6 +133,18 @@ class Ranges:
     """
 
     def __init__(self, ranges):
+        # Validate the ranges
+        if type(ranges) is not list:
+            raise InvalidConfigurationException('Range configuration must be a list')
+
+        for x in ranges:
+            if len(x) != 3:
+                raise InvalidConfigurationException('Range must have 3 keys (i.e. 30, 20, \'static\')')
+            if type(x[0]) is not int or type(x[1]) is not int:
+                raise InvalidConfigurationException('Range start and from must be integers')
+            if type(x[2]) is not int and x[2] != "static":
+                raise InvalidConfigurationException('Range fan speed percentage must be an integer or \'static\'')
+            
         self.ranges = self.sort(ranges)
 
     """

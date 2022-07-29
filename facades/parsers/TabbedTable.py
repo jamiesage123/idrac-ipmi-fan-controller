@@ -25,8 +25,15 @@ class TabbedTable:
     """
     def get(self, key):
         for line in self.tabbedTable:
-            if (line[0] == key):
-                return line[1]
+            if len(line) > 1 and line[0] == key:
+                if len(line) == 2:
+                    # Key => value set up, return the value
+                    return line[1]
+                else:
+                    # Key => multiple values, return all values as a list
+                    values = line.copy()
+                    del values[0]
+                    return values
         return None
 
     """

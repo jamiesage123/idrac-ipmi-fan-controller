@@ -25,7 +25,7 @@ class TabbedList:
     """
     def get(self, key):
         for line in self.tabbedList:
-            if (line[0] == key):
+            if (len(line) == 2 and line[0] == key):
                 return line[1]
         return None
 

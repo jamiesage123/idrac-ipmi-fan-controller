@@ -21,7 +21,7 @@ class TemperatureController:
         output, err = self.ipmitool.execute('sdr type temperature')
 
         # If there were any errors, fallback to static fan mode
-        if err != "" or err is None:
+        if err is not None:
             self.fanController.setStaticFanMode()
             print(err)
                         

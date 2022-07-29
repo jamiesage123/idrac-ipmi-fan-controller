@@ -18,7 +18,11 @@ def main():
     })
 
     # Set up IPMI Tool
-    ipmitool = IPMITool(config)
+    ipmitool = IPMITool(
+        config.get('ipmi', 'host'),
+        config.get('ipmi', 'username'),
+        config.get('ipmi', 'password')
+    )
 
     # Set up the Temperature Controller
     tempController = TemperatureController(config, ipmitool)

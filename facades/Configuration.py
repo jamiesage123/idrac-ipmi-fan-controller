@@ -50,6 +50,9 @@ class Configuration:
     Validate all configurations
     """
     def validate(self):
+        if type(self.config) is not dict:
+            raise InvalidConfigurationException('Configuration must be a dictionary')
+        
         self.validateIPMITool()
         self.validateRanges()
 

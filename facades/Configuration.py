@@ -22,10 +22,16 @@ class Configuration:
     def get(self, *args):
         if len(args) == 2:
             namespace, key = args
+
+            if namespace not in self.config or key not in self.config[namespace]:
+                return None
+
             return self.config[namespace][key]
         else:
-            key = args
-            return self.config[key]
+            if args[0] not in self.config:
+                return None
+            
+            return self.config[args[0]]
 
     """
     Determine if a configuration setting is filled (i.e. not empty)

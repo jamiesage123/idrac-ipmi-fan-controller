@@ -1,6 +1,7 @@
 from datetime import datetime
 from tabulate import tabulate
 from facades.FanController import FanController
+from facades.exceptions.CustomException import CustomException
 from facades.parsers.TabbedTable import TabbedTable
 from facades.exceptions.InvalidConfigurationException import InvalidConfigurationException
 
@@ -23,7 +24,7 @@ class TemperatureController:
         # If there were any errors, fallback to static fan mode
         if err is not None:
             self.fanController.setStaticFanMode()
-            print(err)
+            raise CustomException(err)
                         
         # Parse the output
         values = TabbedTable(output).all()
@@ -50,12 +51,6 @@ class TemperatureController:
         # Set up our ranges
         ranges = Ranges(self.ranges)
 
-        # Fetch the lowest range
-        lowestRange = ranges.lowestRange()
-
-        # Fetch the highest range
-        highestRange = ranges.highestRange()
-
         # Fetch the current temperatures
         temperatures = self.getCurrentTemperatures()
 
@@ -69,30 +64,9 @@ class TemperatureController:
         notes = ""
 
         # Loop through our ranges and find the range that we should be in
-        for rangeConfig in ranges.all():
-            startOfRange, endOfRange, fanSpeed = rangeConfig
-
-            # If our temperature falls into this range, select it
-            if temperature >= startOfRange and temperature <= endOfRange:
-                selectedRange = rangeConfig
+        selectedRange = ranges.closestRange(temperature)
         
-        # If our temperature doesn't fall into any pre-defined ranges, attempt to find the closest range
-        if selectedRange is None:
-            fallBackRange = None
-
-            # Find the closest range
-            if (temperature - lowestRange) > (temperature - highestRange):
-                fallBackRange = highestRange
-            else:
-                fallBackRange = lowestRange
-
-            # Find the fallback range
-            for rangeConfig in ranges.all():
-                if rangeConfig[0] == fallBackRange:
-                    selectedRange = rangeConfig
-                    notes = f'Temperature outside of configured ranges, falling back to closest configuration ({rangeConfig[0]} - {rangeConfig[1]})'
-        
-        # If we still dont have a range, fall back to static fan mode
+        # If we dont have a range, fall back to static fan mode
         if selectedRange is None:
             notes = "No range configured for temperature, falling back to static fan mode"
             self.fanController.setStaticFanMode()
@@ -161,17 +135,33 @@ class Ranges:
         return x[0] != y[0] and ((x[1] - 1) >= (y[0]) and (y[1] - 1) >= (x[0]))
 
     """
-    Get the highest range
+    Find the cloest range for a specific temperature
     """
-    def highestRange(self):
-        return max(map(lambda x: x[0], self.ranges))
+    def closestRange(self, temperature):
+        selectedRange = None
 
-    """
-    Get the lowest range
-    """
-    def lowestRange(self):
-        return min(map(lambda x: x[0], self.ranges))
+        for rangeConfig in self.all():
+            startOfRange, endOfRange, fanSpeed = rangeConfig
 
+            # If our temperature falls into this range, select it
+            if temperature >= startOfRange and temperature <= endOfRange:
+                selectedRange = rangeConfig
+        
+        # If our temperature doesn't fall into any pre-defined ranges, attempt to find the closest range
+        if selectedRange is None:
+            compareNum = None
+
+            for rangeConfig in self.all():
+                startOfRange, endOfRange, fanSpeed = rangeConfig
+            
+                value = abs(temperature - startOfRange)
+
+                if compareNum is None or value < compareNum:
+                    compareNum = value
+                    selectedRange = rangeConfig
+        
+        return selectedRange
+    
     """
     Get all ranges
     """

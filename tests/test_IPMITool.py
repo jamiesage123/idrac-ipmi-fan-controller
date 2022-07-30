@@ -64,6 +64,24 @@ def test_verify_credentials(mocker, capfd):
 
     assert "Successfully connected to Dell Server" in str(capfd.readouterr().out)
 
+def test_verify_credentials_empty_error(mocker, capfd):
+    def mockExecute(self, command):
+        return (
+            """Product Name    :    Dell Server
+               Item One        :    Value
+               Item Two        :    Value2""",
+            ""
+        )
+        
+    mocker.patch(
+        'facades.IPMITool.IPMITool.execute',
+        mockExecute
+    )
+
+    IPMITool('127.0.0.1', 'root', 'calvin').verifyCredentails()
+
+    assert "Successfully connected to Dell Server" in str(capfd.readouterr().out)
+
 def test_verify_credentials_error(mocker, capfd):
     def mockExecute(self, command):
         return (

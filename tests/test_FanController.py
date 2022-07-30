@@ -30,24 +30,43 @@ def controller(mocker, ipmitool):
 
 
 def test_set_manual_mode(mocker, controller):
-    controller.setManualMode()
+    res = controller.setManualMode()
     assert controller.mode == "manual"
     assert controller.getMode() == "manual"
+    assert res is not None
+
+def test_set_manual_mode_already_manual(mocker, controller):
+    controller.mode = "manual"
+    assert controller.setManualMode() is None
 
 
 def test_set_static_fan_mode(mocker, controller):
-    controller.setStaticFanMode()
+    res = controller.setStaticFanMode()
     assert controller.mode == "static"
     assert controller.getMode() == "static"
+    assert res is not None
+
+
+def test_set_static_fan_mode_already_static(mocker, controller):
+    controller.mode = "static"
+    assert controller.setStaticFanMode() is None
 
 
 def test_set_speed(mocker, controller):
-    controller.setSpeed(15)
+    res = controller.setSpeed(15)
     assert controller.speed == 15
     assert controller.getSpeed() == 15
+    assert res is not None
+
+
+def test_set_speed_already_set(mocker, controller):
+    controller.speed = 35
+    assert controller.setSpeed(35) is None
 
 
 def test_set_speed_static(mocker, controller):
-    controller.setSpeed('static')
+    res = controller.setSpeed('static')
     assert controller.mode == "static"
     assert controller.getMode() == "static"
+    assert res is not None
+

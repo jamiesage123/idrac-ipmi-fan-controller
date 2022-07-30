@@ -29,6 +29,7 @@
     </li>
     <li><a href="#usage-local">Usage (local)</a></li>
     <li><a href="#usage-docker">Usage (Docker)</a></li>
+    <li><a href="#tests">Tests</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>
 </ol>
@@ -43,8 +44,12 @@ This project allows you to automatically control your Dell PowerEdge fan speeds 
 ### Built With
 
 * [Python](https://www.python.org/)
-* [Tabulate](https://pypi.org/project/tabulate/)
 * [IPMI Tools](https://github.com/ipmitool/ipmitool)
+* [tabulate](https://pypi.org/project/tabulate/)
+* [pytest](https://docs.pytest.org/)
+* [pytest-mock](https://pypi.org/project/pytest-mock/)
+* [coverage](https://pypi.org/project/coverage//)
+* [pytest-subprocess](https://pypi.org/project/pytest-subprocess/)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -133,6 +138,30 @@ docker run -d \
 ```
 
 <p align="right">(<a href="#top">back to top</a>)</p>
+
+<!-- TESTS -->
+## Tests
+
+Tests are located in the `tests` directory. Before you can run the tests, you must install the test dependencies using pip3
+
+1. Install test dependencies using pip3
+   ```sh
+   pip3 install -r tests/requirements.txt
+   ```
+
+You can now run the project tests
+
+2. Run pytest
+   ```sh
+   pytest tests
+   ```
+
+This project aims to have >= 95% test coverage. You can check the projects test coverage by running:
+
+1. Test coverage
+   ```sh
+   coverage run -m pytest tests
+   ```
 
 <!-- CONTRIBUTING -->
 ## Contributing

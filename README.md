@@ -30,6 +30,7 @@
     <li><a href="#usage-local">Usage (local)</a></li>
     <li><a href="#usage-docker">Usage (Docker)</a></li>
     <li><a href="#tests">Tests</a></li>
+    <li><a href="#code-style-standards">Code style standards</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>
 </ol>
@@ -50,6 +51,7 @@ This project allows you to automatically control your Dell PowerEdge fan speeds 
 * [pytest-mock](https://pypi.org/project/pytest-mock/)
 * [coverage](https://pypi.org/project/coverage//)
 * [pytest-subprocess](https://pypi.org/project/pytest-subprocess/)
+* [flake8](https://flake8.pycqa.org/en/latest/)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -161,6 +163,18 @@ This project aims to have >= 95% test coverage. You can check the projects test 
 1. Test coverage
    ```sh
    coverage run -m pytest tests
+   ```
+
+<!-- LINT -->
+## Code style standards
+
+This project uses Flake8 to enforce code style standards to style conventions in [PEP 8](https://peps.python.org/pep-0008/).
+
+You can run Flake8 by installing the <a href="#tests">test dependencies</a> and then running:
+
+1. Run lint
+   ```sh
+   flake8 . --count --max-complexity=10 --max-line-length=127 --statistics
    ```
 
 <!-- CONTRIBUTING -->

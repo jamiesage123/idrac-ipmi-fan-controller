@@ -4,7 +4,8 @@ from facades.Configuration import Configuration
 from facades.IPMITool import IPMITool
 from facades.TemperatureController import TemperatureController
 
-def main():    
+
+def main():
     # Set up our configuration
     config = Configuration({
         "ipmi": {
@@ -37,6 +38,7 @@ def main():
 
         time.sleep(intervals - ((time.time() - starttime) % intervals))
 
+
 def parseRanges(rangesEnv):
     ranges = None
 
@@ -51,9 +53,13 @@ def parseRanges(rangesEnv):
             # Extract the start, end and fan speed percentage
             startOfRange, endOfRange, fanSpeed = item
 
-            ranges.append([int(startOfRange), int(endOfRange), fanSpeed if fanSpeed == 'static' else int(fanSpeed)])
-    
+            ranges.append([
+                int(startOfRange), int(endOfRange),
+                fanSpeed if fanSpeed == 'static' else int(fanSpeed)
+            ])
+
     return ranges
+
 
 if __name__ == "__main__":
     main()

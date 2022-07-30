@@ -4,29 +4,34 @@ from facades.exceptions.IPMIConnectionException import IPMIConnectionException
 from facades.exceptions.IPMIToolShellException import IPMIToolShellException
 from facades.exceptions.InvalidConfigurationException import InvalidConfigurationException
 
+
 def tests_requires_configuration():
     with pytest.raises(TypeError):
         IPMITool()
+
 
 def tests_requires_host():
     with pytest.raises(InvalidConfigurationException) as excinfo:
         IPMITool('', 'username', 'password')
     assert "Host, username and password must be provided" in str(excinfo.value)
 
+
 def tests_requires_username():
     with pytest.raises(InvalidConfigurationException) as excinfo:
         IPMITool('127.0.0.1', '', 'password')
     assert "Host, username and password must be provided" in str(excinfo.value)
+
 
 def tests_requires_password():
     with pytest.raises(InvalidConfigurationException) as excinfo:
         IPMITool('127.0.0.1', 'root', '')
     assert "Host, username and password must be provided" in str(excinfo.value)
 
+
 def tests_raises_error_failed_connection(mocker):
     def mockVerifyCredentails(self):
         raise IPMIConnectionException()
-        
+
     mocker.patch(
         'facades.IPMITool.IPMITool.verifyCredentails',
         mockVerifyCredentails
@@ -35,16 +40,20 @@ def tests_raises_error_failed_connection(mocker):
     with pytest.raises(IPMIConnectionException):
         IPMITool('127.0.0.1', 'root', 'calvin')
 
+
 def tests_connection_string(mocker):
     def mockVerifyCredentails(self):
         pass
-        
+
     mocker.patch(
         'facades.IPMITool.IPMITool.verifyCredentails',
         mockVerifyCredentails
     )
 
-    assert IPMITool('127.0.0.1', 'root', 'calvin').connectionString() == '-I lanplus -H 127.0.0.1 -U root -P calvin'
+    str = IPMITool('127.0.0.1', 'root', 'calvin').connectionString()
+
+    assert str == '-I lanplus -H 127.0.0.1 -U root -P calvin'
+
 
 def test_verify_credentials(mocker, capfd):
     def mockExecute(self, command):
@@ -54,7 +63,7 @@ def test_verify_credentials(mocker, capfd):
                Item Two        :    Value2""",
             None
         )
-        
+
     mocker.patch(
         'facades.IPMITool.IPMITool.execute',
         mockExecute
@@ -62,7 +71,10 @@ def test_verify_credentials(mocker, capfd):
 
     IPMITool('127.0.0.1', 'root', 'calvin').verifyCredentails()
 
-    assert "Successfully connected to Dell Server" in str(capfd.readouterr().out)
+    assert "Successfully connected to Dell Server" in str(
+        capfd.readouterr().out
+    )
+
 
 def test_verify_credentials_empty_error(mocker, capfd):
     def mockExecute(self, command):
@@ -72,7 +84,7 @@ def test_verify_credentials_empty_error(mocker, capfd):
                Item Two        :    Value2""",
             ""
         )
-        
+
     mocker.patch(
         'facades.IPMITool.IPMITool.execute',
         mockExecute
@@ -80,7 +92,10 @@ def test_verify_credentials_empty_error(mocker, capfd):
 
     IPMITool('127.0.0.1', 'root', 'calvin').verifyCredentails()
 
-    assert "Successfully connected to Dell Server" in str(capfd.readouterr().out)
+    assert "Successfully connected to Dell Server" in str(
+        capfd.readouterr().out
+    )
+
 
 def test_verify_credentials_error(mocker, capfd):
     def mockExecute(self, command):
@@ -88,7 +103,7 @@ def test_verify_credentials_error(mocker, capfd):
             None,
             "I am an error"
         )
-        
+
     mocker.patch(
         'facades.IPMITool.IPMITool.execute',
         mockExecute
@@ -97,12 +112,15 @@ def test_verify_credentials_error(mocker, capfd):
     with pytest.raises(IPMIConnectionException):
         IPMITool('127.0.0.1', 'root', 'calvin').verifyCredentails()
 
-    assert "Unable to connect to IPMI Tool. Please check your host, username and password." in str(capfd.readouterr().out)
+    assert "Unable to connect to IPMI Tool. Please check your host, username and password." in str(
+        capfd.readouterr().out
+    )
+
 
 def test_execute(mocker, fp):
     def mockVerifyCredentails(self):
         pass
-        
+
     mocker.patch(
         'facades.IPMITool.IPMITool.verifyCredentails',
         mockVerifyCredentails
@@ -117,15 +135,18 @@ def test_execute(mocker, fp):
         stdout=out, stderr=""
     )
 
-    stdout, stderr = IPMITool('127.0.0.1', 'root', 'calvin').execute('test command')
+    stdout, stderr = IPMITool(
+        '127.0.0.1', 'root', 'calvin'
+    ).execute('test command')
 
     assert stdout == out
     assert stderr == ""
 
+
 def test_execute_shell_error(mocker, fp):
     def mockVerifyCredentails(self):
         pass
-        
+
     mocker.patch(
         'facades.IPMITool.IPMITool.verifyCredentails',
         mockVerifyCredentails
@@ -141,10 +162,11 @@ def test_execute_shell_error(mocker, fp):
 
     assert "/bin/sh: Shell error" in str(excinfo.value)
 
+
 def test_execute_connection_error(mocker, fp):
     def mockVerifyCredentails(self):
         pass
-        
+
     mocker.patch(
         'facades.IPMITool.IPMITool.verifyCredentails',
         mockVerifyCredentails
@@ -158,4 +180,6 @@ def test_execute_connection_error(mocker, fp):
     with pytest.raises(IPMIConnectionException) as excinfo:
         IPMITool('127.0.0.1', 'root', 'calvin').execute('test command')
 
-    assert "Error: Unable to establish IPMI v2 / RMCP+ session" in str(excinfo.value)
+    assert "Error: Unable to establish IPMI v2 / RMCP+ session" in str(
+        excinfo.value
+    )

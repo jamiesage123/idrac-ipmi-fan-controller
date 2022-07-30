@@ -2,8 +2,8 @@ class TabbedTable:
     """
     Represents a facade for parsing IPMI Tool tabbed table output
     For example:
-    Foo    |    Bar    |    123 
-    Mar    |    Zoo    |    456 
+    Foo    |    Bar    |    123
+    Mar    |    Zoo    |    456
     """
 
     def __init__(self, input):
@@ -12,17 +12,21 @@ class TabbedTable:
     """
     Parse a tabbed table
     """
+
     def parse(self, input):
         results = []
 
         for line in input.splitlines():
-            results.append(list(map(lambda value: value.strip(), line.split("|"))))
-        
+            results.append(
+                list(map(lambda value: value.strip(), line.split("|")))
+            )
+
         return results
 
     """
     Get a specific value by key
     """
+
     def get(self, key):
         for line in self.tabbedTable:
             if len(line) > 1 and line[0] == key:
@@ -39,5 +43,6 @@ class TabbedTable:
     """
     Get all items
     """
+
     def all(self):
         return self.tabbedTable

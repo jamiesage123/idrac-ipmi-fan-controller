@@ -35,6 +35,7 @@ def test_set_manual_mode(mocker, controller):
     assert controller.getMode() == "manual"
     assert res is not None
 
+
 def test_set_manual_mode_already_manual(mocker, controller):
     controller.mode = "manual"
     assert controller.setManualMode() is None
@@ -69,4 +70,3 @@ def test_set_speed_static(mocker, controller):
     assert controller.mode == "static"
     assert controller.getMode() == "static"
     assert res is not None
-

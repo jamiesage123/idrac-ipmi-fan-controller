@@ -1,5 +1,10 @@
 <div id="top"></div>
 
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/jamiesage123/idrac-ipmi-fan-controller?include_prereleases&style=for-the-badge)
+![GitHub Workflow Status (event)](https://img.shields.io/github/workflow/status/jamiesage123/idrac-ipmi-fan-controller/Docker%20Image%20CI?style=for-the-badge)
+![GitHub](https://img.shields.io/github/license/jamiesage123/idrac-ipmi-fan-controller?style=for-the-badge)
+
+
 <br />
 <div align="center">
     <h3 align="center">iDRAC IPMI Fan Controller</h3>

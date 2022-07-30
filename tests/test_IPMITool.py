@@ -102,7 +102,7 @@ def test_execute(mocker, fp):
     stdout, stderr = IPMITool('127.0.0.1', 'root', 'calvin').execute('test command')
 
     assert stdout == out
-    assert stderr is ""
+    assert stderr == ""
 
 def test_execute_shell_error(mocker, fp):
     def mockVerifyCredentails(self):

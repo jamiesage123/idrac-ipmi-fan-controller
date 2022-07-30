@@ -12,17 +12,21 @@ class TabbedList:
     """
     Parse a tabbed list
     """
+
     def parse(self, input):
         results = []
 
         for line in input.splitlines():
-            results.append(list(map(lambda value: value.strip(), line.split(":"))))
-        
+            results.append(
+                list(map(lambda value: value.strip(), line.split(":")))
+            )
+
         return results
 
     """
     Get a specific value by key
     """
+
     def get(self, key):
         for line in self.tabbedList:
             if (len(line) == 2 and line[0] == key):
@@ -32,5 +36,6 @@ class TabbedList:
     """
     Get all items
     """
+
     def all(self):
         return self.tabbedList

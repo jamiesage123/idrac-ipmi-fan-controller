@@ -4,17 +4,19 @@ from facades.Configuration import Configuration
 from facades.TemperatureController import TemperatureController
 from facades.exceptions.CustomException import CustomException
 
+
 @pytest.fixture
 def ipmitool(mocker):
     def mockVerifyCredentails(self):
         pass
-        
+
     mocker.patch(
         'facades.IPMITool.IPMITool.verifyCredentails',
         mockVerifyCredentails
     )
 
     return IPMITool('127.0.0.1', 'root', 'calvin')
+
 
 def test_get_current_temperatures(mocker, ipmitool):
     def mockExecute(self, command):
@@ -25,7 +27,7 @@ def test_get_current_temperatures(mocker, ipmitool):
                Temp             | 0Fh | ok  |  3.2 | 44 degrees C""",
             None
         )
-        
+
     mocker.patch(
         'facades.IPMITool.IPMITool.execute',
         mockExecute
@@ -36,7 +38,10 @@ def test_get_current_temperatures(mocker, ipmitool):
         "monitor": {"ranges": [[30, 40, 10], [40, 50, 'static']]}
     })
 
-    assert type(TemperatureController(config, ipmitool).getCurrentTemperatures()) is list
+    assert type(TemperatureController(
+        config, ipmitool).getCurrentTemperatures()
+    ) is list
+
 
 def test_get_current_temperatures_skips_bad_sensors(mocker, ipmitool):
     def mockExecute(self, command):
@@ -47,7 +52,7 @@ def test_get_current_temperatures_skips_bad_sensors(mocker, ipmitool):
                Temp             | 0Fh |     |  3.2 | 44 degrees C""",
             None
         )
-        
+
     mocker.patch(
         'facades.IPMITool.IPMITool.execute',
         mockExecute
@@ -58,12 +63,15 @@ def test_get_current_temperatures_skips_bad_sensors(mocker, ipmitool):
         "monitor": {"ranges": [[30, 40, 10], [40, 50, 'static']]}
     })
 
-    temperatures = list(map(lambda x: x['value'], TemperatureController(config, ipmitool).getCurrentTemperatures()))
+    temperatures = list(map(lambda x: x['value'], TemperatureController(
+        config, ipmitool
+    ).getCurrentTemperatures()))
 
     assert 31 in temperatures
     assert 40 in temperatures
     assert 50 not in temperatures
     assert 44 not in temperatures
+
 
 def test_get_current_temperatures_static_fallback_on_error(mocker, ipmitool):
     def mockExecute(self, command):
@@ -71,7 +79,7 @@ def test_get_current_temperatures_static_fallback_on_error(mocker, ipmitool):
             None,
             "I am an error"
         )
-        
+
     mocker.patch(
         'facades.IPMITool.IPMITool.execute',
         mockExecute
@@ -89,6 +97,7 @@ def test_get_current_temperatures_static_fallback_on_error(mocker, ipmitool):
 
     mock.assert_called()
 
+
 def test_monitor_sets_correct_fan_speed(mocker, ipmitool):
     def mockExecute(self, command):
         return (
@@ -98,7 +107,7 @@ def test_monitor_sets_correct_fan_speed(mocker, ipmitool):
                Temp             | 0Fh | ok  |  3.2 | 44 degrees C""",
             None
         )
-        
+
     mocker.patch(
         'facades.IPMITool.IPMITool.execute',
         mockExecute
@@ -115,6 +124,7 @@ def test_monitor_sets_correct_fan_speed(mocker, ipmitool):
 
     mock.assert_called_with(30)
 
+
 def test_monitor_sets_correct_fan_speed_complex(mocker, ipmitool):
     def mockExecute(self, command):
         return (
@@ -124,7 +134,7 @@ def test_monitor_sets_correct_fan_speed_complex(mocker, ipmitool):
                Temp             | 0Fh | ok  |  3.2 | 48 degrees C""",
             None
         )
-        
+
     mocker.patch(
         'facades.IPMITool.IPMITool.execute',
         mockExecute
@@ -144,6 +154,7 @@ def test_monitor_sets_correct_fan_speed_complex(mocker, ipmitool):
 
     mock.assert_called_with(35)
 
+
 def test_monitor_fallback_highest_range(mocker, ipmitool):
     def mockExecute(self, command):
         return (
@@ -153,7 +164,7 @@ def test_monitor_fallback_highest_range(mocker, ipmitool):
                Temp             | 0Fh | ok  |  3.2 | 44 degrees C""",
             None
         )
-        
+
     mocker.patch(
         'facades.IPMITool.IPMITool.execute',
         mockExecute
@@ -169,6 +180,7 @@ def test_monitor_fallback_highest_range(mocker, ipmitool):
     TemperatureController(config, ipmitool).monitor()
 
     mock.assert_called_with(45)
+
 
 def test_monitor_fallback_lowest_range(mocker, ipmitool):
     def mockExecute(self, command):
@@ -196,6 +208,7 @@ def test_monitor_fallback_lowest_range(mocker, ipmitool):
 
     mock.assert_called_with(10)
 
+
 def test_monitor_static_range(mocker, ipmitool):
     def mockExecute(self, command):
         return (
@@ -205,7 +218,7 @@ def test_monitor_static_range(mocker, ipmitool):
                Temp             | 0Fh | ok  |  3.2 | 44 degrees C""",
             None
         )
-        
+
     mocker.patch(
         'facades.IPMITool.IPMITool.execute',
         mockExecute
@@ -222,6 +235,7 @@ def test_monitor_static_range(mocker, ipmitool):
 
     mock.assert_called_with('static')
 
+
 def test_monitor_fallback_to_static_without_range(mocker, ipmitool):
     def mockExecute(self, command):
         return (
@@ -231,7 +245,7 @@ def test_monitor_fallback_to_static_without_range(mocker, ipmitool):
                Temp             | 0Fh | ok  |  3.2 | 44 degrees C""",
             None
         )
-        
+
     mocker.patch(
         'facades.IPMITool.IPMITool.execute',
         mockExecute

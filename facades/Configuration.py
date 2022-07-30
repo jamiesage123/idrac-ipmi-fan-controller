@@ -1,6 +1,7 @@
 from facades.TemperatureController import Ranges
 from facades.exceptions.InvalidConfigurationException import InvalidConfigurationException
 
+
 class Configuration:
     """
     Represents a facade for setting and retreiving configuration options
@@ -19,6 +20,7 @@ class Configuration:
     key : str
         The configuration key
     """
+
     def get(self, *args):
         if len(args) == 2:
             namespace, key = args
@@ -30,7 +32,7 @@ class Configuration:
         else:
             if args[0] not in self.config:
                 return None
-            
+
             return self.config[args[0]]
 
     """
@@ -42,6 +44,7 @@ class Configuration:
     key : str
         The configuration key
     """
+
     def filled(self, *args):
         value = self.get(*args)
         return value is not None and value != ""
@@ -49,33 +52,44 @@ class Configuration:
     """
     Validate all configurations
     """
+
     def validate(self):
         if type(self.config) is not dict:
-            raise InvalidConfigurationException('Configuration must be a dictionary')
-        
+            raise InvalidConfigurationException(
+                'Configuration must be a dictionary'
+            )
+
         self.validateIPMITool()
         self.validateRanges()
 
     """
     Validate the IPMI Tool configuration
     """
+
     def validateIPMITool(self):
         if not self.filled('ipmi', 'host'):
             raise InvalidConfigurationException('IPMI host is not configured')
 
         if not self.filled('ipmi', 'username'):
-            raise InvalidConfigurationException('IPMI username is not configured')
+            raise InvalidConfigurationException(
+                'IPMI username is not configured'
+            )
 
         if not self.filled('ipmi', 'password'):
-            raise InvalidConfigurationException('IPMI password is not configured')
+            raise InvalidConfigurationException(
+                'IPMI password is not configured'
+            )
 
     """
     Validate the range configuration
     """
+
     def validateRanges(self):
         # Ensure that we have ranges set up
         if not self.filled('monitor', 'ranges'):
-            raise InvalidConfigurationException('Range configuration is not set up')
+            raise InvalidConfigurationException(
+                'Range configuration is not set up'
+            )
 
         # Fetch the ranges
         ranges = Ranges(self.get('monitor', 'ranges'))

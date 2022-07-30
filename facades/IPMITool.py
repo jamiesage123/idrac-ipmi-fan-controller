@@ -69,6 +69,6 @@ class IPMITool:
 
         # Handle connection related errors
         if "Error: Unable to establish IPMI v2 / RMCP+ session" in stderr:
-            raise IPMIConnectionException(stdout)
+            raise IPMIConnectionException(stderr)
 
         return (stdout, stderr)

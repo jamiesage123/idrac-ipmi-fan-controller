@@ -39,10 +39,12 @@ class IPMITool:
             productName = TabbedList(output).get('Product Name')
 
             print(
-                f'Successfully connected to {productName if productName is not None else "Unknown"}')
+                f'Successfully connected to {productName if productName is not None else "Unknown"}'
+            )
         except IPMIConnectionException as err:
             print(
-                "Unable to connect to IPMI Tool. Please check your host, username and password.")
+                "Unable to connect to IPMI Tool. Please check your host, username and password."
+            )
             raise err
 
     """

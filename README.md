@@ -84,12 +84,13 @@ After installing the projects prerequisites, you will need to install the projec
 
 This project depends on several environment variables being available to the script, these are described below
 
-| Variable       | Default | Description                                                           |
-|----------------|---------|-----------------------------------------------------------------------|
-| `IDRAC_HOST`     | `null`  | IP address of your iDRAC host                                         |
-| `IDRAC_USERNAME` | `null`  | Username of your iDRAC host                                           |
-| `IDRAC_PASSWORD` | `null`  | Password of your iDRAC host                                           |
-| `TEMP_RANGES`    | `null`  | Pipe-separated list of temperature ranges, see below for more details |
+| Variable             | Default | Description                                                           |
+|----------------------|---------|-----------------------------------------------------------------------|
+| `IDRAC_HOST`         | `null`  | IP address of your iDRAC host                                         |
+| `IDRAC_USERNAME`     | `null`  | Username of your iDRAC host                                           |
+| `IDRAC_PASSWORD`     | `null`  | Password of your iDRAC host                                           |
+| `IPMI_READ_INTERVAL` | `30`    | Interval (in seconds) to query IPMI
+| `TEMP_RANGES`        | `null`  | Pipe-separated list of temperature ranges, see below for more details |
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 

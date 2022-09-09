@@ -29,7 +29,7 @@ def main():
     tempController = TemperatureController(config, ipmitool)
 
     # TODO: better
-    intervals = os.getenv('IPMI_READ_INTERVAL', 30)
+    intervals = float(os.getenv('IPMI_READ_INTERVAL', 30))
     starttime = time.time()
 
     while True:

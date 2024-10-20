@@ -1,4 +1,6 @@
 from datetime import datetime
+from time import sleep
+
 from tabulate import tabulate
 from facades.FanController import FanController
 from facades.exceptions.CustomException import CustomException
@@ -21,31 +23,38 @@ class TemperatureController:
     """
 
     def getCurrentTemperatures(self):
-        output, err = self.ipmitool.execute('sdr type temperature')
-
-        # If there were any errors, fallback to static fan mode
-        if err is not None and err != "":
-            self.fanController.setStaticFanMode()
-            raise CustomException(err)
-
-        # Parse the output
-        values = TabbedTable(output).all()
-
+        error_count = 0
         temperatures = []
 
-        for data in values:
-            name, value1, status, value2, temperature = data
+        while error_count < 3:
+            output, err = self.ipmitool.execute('sdr type temperature')
 
-            # Skip irrevalant sensors
-            if status == 'ns' or status == '':
+            # Retry 3 times
+            if err is not None and err != "":
+                error_count += 1
+                if error_count >= 3:
+                    self.fanController.setStaticFanMode()
+                    raise CustomException(err)
+                print(f'Temperature fetch error, retrying {error_count} time(s)...maximum 3 times')
+                sleep(5)
                 continue
+            else:
+                # Parse the output
+                values = TabbedTable(output).all()
 
-            temperatures.append({
-                "name": name.replace(" Temp", ""),
-                "value": int(temperature.split(' ')[0])
-            })
+                for data in values:
+                    name, value1, status, value2, temperature = data
 
-        return temperatures
+                    # Skip irrelevant sensors
+                    if status == 'ns' or status == '':
+                        continue
+
+                    temperatures.append({
+                        "name": name.replace(" Temp", ""),
+                        "value": int(temperature.split(' ')[0])
+                    })
+
+                return temperatures
 
     """
     Run the temperature monitoring logic

@@ -1,0 +1,12 @@
+services:
+  idrac-ipmi-fan-controller:
+    container_name: idrac-ipmi-fan-controller
+    restart: unless-stopped
+    image: idrac-ipmi-fan-controller
+    build:
+      dockerfile: Dockerfile
+    environment:
+      IDRAC_HOST: <HOST>
+      IDRAC_USERNAME: <USERNAME>
+      IDRAC_PASSWORD: <PASSWORD>
+      TEMP_RANGES: <RANGES>
